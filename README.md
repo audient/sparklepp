@@ -1,5 +1,5 @@
 #Sparkle++
-A Juce module for integration of the Sparkle update frameworks for Mac and Windows
+A [Juce](http://www.juce.com/) module for integration of the Sparkle update frameworks for Mac and Windows
 
 ##Setup
 
