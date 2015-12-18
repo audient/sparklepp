@@ -17,34 +17,19 @@ public:
     SUUpdater* updater;
 };
 
-Sparkle::Sparkle ()
-{
-    initialise ();
-}
 
 Sparkle::Sparkle (const juce::URL& appcastURL)
 {
-    initialise();
-    setAppCastURL (appcastURL);
-}
-
-void Sparkle::initialise()
-{
     d = new Private;
     d->updater = [[SUUpdater sharedUpdater] retain];
-
+    NSURL* url = [NSURL URLWithString:
+                  [NSString stringWithUTF8String: appcastURL.toString(true).toRawUTF8()]];
+    [d->updater setFeedURL: url];
 }
 
 Sparkle::~Sparkle()
 {
     [d->updater release];
-}
-
-void Sparkle::setAppCastURL(const juce::URL& appcastURL)
-{
-    NSURL* url = [NSURL URLWithString:
-                  [NSString stringWithUTF8String: appcastURL.toString(true).toRawUTF8()]];
-    [d->updater setFeedURL: url];
 }
 
 void Sparkle::checkForUpdates()
