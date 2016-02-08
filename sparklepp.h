@@ -38,8 +38,15 @@ public:
         virtual void updaterDidNotFindUpdate() {}
     };
     
-    void addListener (Listener* listener);
-    void removeListener (Listener* listener);
+    void addListener (Listener* listener)
+    {
+        listeners.add (listener);
+    }
+
+    void removeListener (Listener* listener)
+    {
+        listeners.remove (listener);
+    }
     
     /* internal */
     void didFindValidUpdate();
