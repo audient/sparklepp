@@ -163,7 +163,8 @@ void Sparkle::checkForUpdateInformation ()
 
     auto latestReleaseVersion = getLatestVersionNumber (xml);
 
-    if (isVersionNumberGreater (getCurrentInstalledVersion (), latestReleaseVersion) != 1)
+    if ((latestReleaseVersion == String::empty) || 
+        isVersionNumberGreater (getCurrentInstalledVersion (), latestReleaseVersion) != 1)
     { 
         updaterDidNotFindUpdate ();
     }
