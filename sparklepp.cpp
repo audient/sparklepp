@@ -26,7 +26,7 @@ public:
     const URL appcastURL;
 
 private:
-    Private operator=(Private) = delete;
+    Private operator= (Private) = delete;
 };
 
 Sparkle::Sparkle (const juce::URL& appcastUrl)
