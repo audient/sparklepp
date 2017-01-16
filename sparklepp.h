@@ -7,6 +7,32 @@
 
   ==============================================================================
 */
+
+/*******************************************************************************
+The block below describes the properties of this module, and is read by
+the Projucer to automatically generate project code that uses it.
+For details about the syntax and how to create or use a module, see the
+JUCE Module Format.txt file.
+
+
+BEGIN_JUCE_MODULE_DECLARATION
+
+ID:               sparklepp
+vendor:           
+version:          0.1.0
+name:             Sparkle
+description:      Juce module for the Sparkle update library.
+website:          juce_core
+license:          https://github.com/sparkle-project/Sparkle/blob/master/LICENSE
+
+dependencies:     
+OSXFrameworks:    Foundation Sparkle
+iOSFrameworks:    
+
+END_JUCE_MODULE_DECLARATION
+
+*******************************************************************************/
+
 #ifndef SPARKLEPP_H_INCLUDED
 #define SPARKLEPP_H_INCLUDED
 
