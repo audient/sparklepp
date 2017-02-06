@@ -174,6 +174,16 @@ void Sparkle::checkForUpdateInformation ()
     }
 }
 
+void Sparkle::addListener (Listener* listener)
+{
+    listeners.add (listener);
+}
+
+void Sparkle::removeListener (Listener* listener)
+{
+    listeners.remove (listener);
+}
+
 void Sparkle::didFindValidUpdate ()
 {
     listeners.call (&Listener::didFindValidUpdate);
