@@ -8,7 +8,7 @@
   ==============================================================================
 */
 
-#include "Native\Win\winsparkle.h"
+//#include "Native\Win\winsparkle.h"
 #include <algorithm>
 
 #include "sparklepp.h"
@@ -29,28 +29,28 @@ private:
     Private operator= (Private) = delete;
 };
 
-Sparkle::Sparkle (const juce::URL& appcastUrl)
+Sparkle::Sparkle (const juce::URL& /*appcastUrl*/)
 {
-    d = new Private (appcastUrl);
-    win_sparkle_set_appcast_url (appcastUrl.toString (true).toUTF8());
+//    d = new Private (appcastUrl);
+//    win_sparkle_set_appcast_url (appcastUrl.toString (true).toUTF8());
 }
 
 Sparkle::~Sparkle ()
 {
-    if (d->initialised)
-    {
-        win_sparkle_init();
-        d->initialised = false;
-    }
+    //if (d->initialised)
+    //{
+    //    win_sparkle_init();
+    //    d->initialised = false;
+    //}
 }
 
 void Sparkle::checkForUpdateInBackground ()
 {
-    if (!d->initialised)
-    {
-        win_sparkle_init ();
-        d->initialised = true;
-    }
+    //if (!d->initialised)
+    //{
+    //    win_sparkle_init ();
+    //    d->initialised = true;
+    //}
 }
 
 
