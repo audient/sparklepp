@@ -86,10 +86,10 @@ public:
     int compareElements (XmlElement* first, XmlElement* second)
     {
         auto firstEnclosure = first->getChildByName ("enclosure");
-        auto firstVersionNumber = firstEnclosure->getStringAttribute ("sparkle:version", juce::String::empty);
+        auto firstVersionNumber = firstEnclosure->getStringAttribute ("sparkle:version", juce::String ());
 
         auto secondEnclosure = second->getChildByName ("enclosure");
-        auto secondVersionNumber = secondEnclosure->getStringAttribute ("sparkle:version", juce::String::empty);
+        auto secondVersionNumber = secondEnclosure->getStringAttribute ("sparkle:version", juce::String ());
 
         return isVersionNumberGreater (firstVersionNumber, secondVersionNumber);
     }
@@ -99,13 +99,13 @@ static String getLatestVersionNumber (XmlElement* xml)
 {
     if (xml == nullptr)
     {
-        return String::empty;
+        return String ();
     }
 
     if (xml->hasTagName ("rss") == false)
     {
         Logger::outputDebugString ("getLatestVersionNumber: RSS tag not found");
-        return String::empty;
+        return String ();
     }
 
     auto channel = xml->getChildByName ("channel");
@@ -113,7 +113,7 @@ static String getLatestVersionNumber (XmlElement* xml)
     if (channel == nullptr)
     {
         Logger::outputDebugString ("getLatestVersionNumber: Channel not found");
-        return String::empty;
+        return String ();
     }
 
     auto item = channel->getChildByName ("item");
@@ -121,7 +121,7 @@ static String getLatestVersionNumber (XmlElement* xml)
     if (item == nullptr)
     {
         Logger::outputDebugString ("getLatestVersionNumber: No items found");
-        return String::empty;
+        return String ();
     }
 
     juce::ScopedPointer<juce::Array<juce::XmlElement*>> items = new juce::Array<XmlElement*> ();
@@ -140,10 +140,10 @@ static String getLatestVersionNumber (XmlElement* xml)
     if (latestRelease == nullptr)
     {
         Logger::outputDebugString ("getLatestVersionNumber: Latest release not found");
-        return String::empty;
+        return String ();
     }
 
-    return latestRelease->getStringAttribute ("sparkle:version", juce::String::empty);
+    return latestRelease->getStringAttribute ("sparkle:version", juce::String ());
 }
 
 static String getCurrentInstalledVersion ()
@@ -153,7 +153,7 @@ static String getCurrentInstalledVersion ()
 
 void Sparkle::checkForUpdateInformation ()
 {
-    ScopedPointer<XmlElement> xml = d->appcastURL.readEntireXmlStream ();
+    auto xml = d->appcastURL.readEntireXmlStream ();
 
     if (xml == nullptr)
     {
@@ -161,9 +161,9 @@ void Sparkle::checkForUpdateInformation ()
         return;
     }
 
-    auto latestReleaseVersion = getLatestVersionNumber (xml);
+    String latestReleaseVersion = getLatestVersionNumber (xml.get ());
 
-    if ((latestReleaseVersion == String::empty) || 
+    if ((latestReleaseVersion.isEmpty ()) || 
         isVersionNumberGreater (getCurrentInstalledVersion (), latestReleaseVersion) != 1)
     { 
         updaterDidNotFindUpdate ();
@@ -233,14 +233,14 @@ public:
     void appcastParsingTest ()
     {
         beginTest ("getLatestVersionNumber");
-        expect (getLatestVersionNumber (oneReleaseFixture) == String ("2.0"));
+        expect (getLatestVersionNumber (oneReleaseFixture.get ()) == String ("2.0"));
 
-        expect (getLatestVersionNumber (twoReleaseFixture) == String ("2.1"));
+        expect (getLatestVersionNumber (twoReleaseFixture.get ()) == String ("2.1"));
     }
 
 private:
-    ScopedPointer<XmlElement> oneReleaseFixture;
-    ScopedPointer<XmlElement> twoReleaseFixture;
+    std::unique_ptr<XmlElement> oneReleaseFixture;
+    std::unique_ptr<XmlElement> twoReleaseFixture;
 
     const String oneReleaseFixtureContent = { "<?xml version=\"1.0\" encoding=\"utf-8\"?><rss version=\"2.0\" xmlns:sparkle=\"http://www.andymatuschak.org/xml-namespaces/sparkle\"  xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><channel><title>Sparkle Test App Changelog</title><link>http://sparkle-project.org/files/sparkletestcast.xml</link><description>Most recent changes with links to updates.</description><language>en</language><item><title>Version 2.0</title><description><![CDATA[<ul><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li><li>Suspendisse sed felis ac ante ultrices rhoncus.Etiam quis elit vel nibh placerat facilisis in id leo.</li><li>Vestibulum nec tortor odio, nec malesuada libero.Cras vel convallis nunc.</li><li>Suspendisse tristique massa eget velit consequat tincidunt.Praesent sodales hendrerit pretium.</li></ul>]]></description><pubDate>Sat, 26 Jul 2014 15:20 : 11 + 0000</pubDate><enclosure url=\"https://sparkle-project.org/files/Sparkle%20Test%20App.zip\" sparkle:version=\"2.0\" length=\"107758\" type=\"application/octet-stream\" sparkle:dsaSignature=\"MCwCFCdoW13VBGJWIfIklKxQVyetgxE7AhQTVuY9uQT0KOV1UEk21epBsGZMPg==\"/></item></channel></rss>" };
     const String twoReleaseFixtureContent = { "<?xml version=\"1.0\" encoding=\"utf-8\"?><rss version=\"2.0\" xmlns:sparkle=\"http://www.andymatuschak.org/xml-namespaces/sparkle\"  xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><channel><title>Sparkle Test App Changelog</title><link>http://sparkle-project.org/files/sparkletestcast.xml</link><description>Most recent changes with links to updates.</description><language>en</language><item><title>Version 2.0</title><description><![CDATA[<ul><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li><li>Suspendisse sed felis ac ante ultrices rhoncus.Etiam quis elit vel nibh placerat facilisis in id leo.</li><li>Vestibulum nec tortor odio, nec malesuada libero.Cras vel convallis nunc.</li><li>Suspendisse tristique massa eget velit consequat tincidunt.Praesent sodales hendrerit pretium.</li></ul>]]></description><pubDate>Sat, 26 Jul 2014 15:20 : 11 + 0000</pubDate><enclosure url=\"https://sparkle-project.org/files/Sparkle%20Test%20App.zip\" sparkle:version=\"2.0\" length=\"107758\" type=\"application/octet-stream\" sparkle:dsaSignature=\"MCwCFCdoW13VBGJWIfIklKxQVyetgxE7AhQTVuY9uQT0KOV1UEk21epBsGZMPg==\"/></item><item><title>Version 2.1</title><description><![CDATA[<ul><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li><li>Suspendisse sed felis ac ante ultrices rhoncus.Etiam quis elit vel nibh placerat facilisis in id leo.</li><li>Vestibulum nec tortor odio, nec malesuada libero.Cras vel convallis nunc.</li><li>Suspendisse tristique massa eget velit consequat tincidunt.Praesent sodales hendrerit pretium.</li></ul>]]></description><pubDate>Tues, 29 Jul 2014 15:20 : 11 + 0000</pubDate><enclosure url=\"https://sparkle-project.org/files/Sparkle%20Test%20App.zip\" sparkle:version=\"2.1\" length=\"107758\" type=\"application/octet-stream\"/></item></channel></rss>" };
