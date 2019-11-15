@@ -124,7 +124,7 @@ static String getLatestVersionNumber (XmlElement* xml)
         return String ();
     }
 
-    juce::ScopedPointer<juce::Array<juce::XmlElement*>> items = new juce::Array<XmlElement*> ();
+    std::unique_ptr<juce::Array<juce::XmlElement*>> items = std::make_unique<juce::Array<XmlElement*>> ();
 
     while (item != nullptr)
     {
@@ -153,6 +153,9 @@ static String getCurrentInstalledVersion ()
 
 void Sparkle::checkForUpdateInformation ()
 {
+    if (d == nullptr)
+        return;
+
     auto xml = d->appcastURL.readEntireXmlStream ();
 
     if (xml == nullptr)

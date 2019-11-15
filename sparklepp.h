@@ -72,7 +72,7 @@ public:
     void updaterDidNotFindUpdate();
 private:
     class Private;
-    juce::ScopedPointer<Private> d;
+    std::unique_ptr<Private> d;
     
     juce::ListenerList<Listener> listeners;
 };
