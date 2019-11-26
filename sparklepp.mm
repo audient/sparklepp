@@ -145,6 +145,7 @@ Sparkle::Sparkle (const juce::URL& appcastURL)
 Sparkle::~Sparkle()
 {
     [d->updater release];
+    delete d;
 }
 
 void Sparkle::checkForUpdateInBackground()

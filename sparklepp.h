@@ -73,7 +73,7 @@ public:
 private:
     class Private;
 #ifdef JUCE_MAC
-    juce::ScopedPointer<Private> d;
+    Private* d;
 #else
     std::unique_ptr<Private> d;
 #endif
