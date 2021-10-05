@@ -7,6 +7,7 @@
 
   ==============================================================================
 */
+#include <juce_opengl/opengl/juce_gl.h>
 
 #import <Sparkle/Sparkle.h>
 
