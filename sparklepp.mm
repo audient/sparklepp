@@ -8,6 +8,8 @@ Sparkle.mm
   ==============================================================================
   */
 
+#if SPARKLE_UPDATER_ENABLE
+
 #import <Sparkle/Sparkle.h>
 
 #include "sparklepp.h"
@@ -197,3 +199,5 @@ void Sparkle::removeListener (Listener* listener)
 {
     listeners.remove (listener);
 }
+
+#endif

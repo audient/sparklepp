@@ -36,6 +36,8 @@ END_JUCE_MODULE_DECLARATION
 #ifndef SPARKLEPP_H_INCLUDED
 #define SPARKLEPP_H_INCLUDED
 
+#if SPARKLE_UPDATER_ENABLE
+
 #include "JuceHeader.h"
 
 #ifdef __OBJC__
@@ -47,10 +49,10 @@ class Sparkle
 public:
     Sparkle();
     ~Sparkle();
-    
+
     /* This will asynchronously launch an update GUI if an update is available */
     void checkForUpdateInBackground();
-    
+
     /* This will asynchronously check if an update is available.
      * If an update is available the didFindValidUpdate method will becalled on 
      * listeners.
@@ -58,31 +60,33 @@ public:
      * be called on listeners.
      */
     void checkForUpdateInformation();
-    
+
     class Listener
     {
     public:
         virtual ~Listener() {}
-        
+
         virtual void didFindValidUpdate() {}
         virtual void updaterDidNotFindUpdate() {}
     };
-    
+
     void addListener (Listener* listener);
     void removeListener (Listener* listener);
-    
+
     /* internal */
     void didFindValidUpdate();
     void updaterDidNotFindUpdate();
+
 private:
 #ifdef __OBJC__
     // Expose ObjC type only to updater_sparkle.mm. This allows ARC to properly track its lifetime.
-    AppUpdaterDelegate *updaterDelegate;
+    AppUpdaterDelegate* updaterDelegate;
 #else
-    void *updaterDelegate;
+    void* updaterDelegate;
 #endif
-    
+
     juce::ListenerList<Listener> listeners;
 };
 
+#endif
 #endif
