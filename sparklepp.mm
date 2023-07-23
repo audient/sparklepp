@@ -18,6 +18,7 @@ Sparkle.mm
 {
     Sparkle* delegateHandler;
 }
+@property (nonatomic, strong) SPUStandardUpdaterController* updaterController;
 
 - (id)init:(Sparkle*)handler;
 
@@ -69,6 +70,12 @@ Called after an update is aborted due to an error.
 */
 - (void)updater:(SPUUpdater*)updater didAbortWithError:(NSError*)error;
 
+/*
+@return The set of channel names the updater is allowed to find new updates in. An empty set is the default behavior,
+        which means the updater will only look for updates in the default channel.
+*/
+- (NSSet<NSString*>*)allowedChannelsForUpdater:(SPUUpdater*)updater;
+
 @end
 
 @implementation SparkleDelegate
@@ -102,6 +109,7 @@ Called when a valid update is found by the update driver.
 */
 - (void)updater:(SPUUpdater*)updater didFindValidUpdate:(SUAppcastItem*)item
 {
+    NSLog (@"Found update: %@", [item displayVersionString]);
     delegateHandler->didFindValidUpdate();
 }
 
@@ -147,18 +155,33 @@ Called after an update is aborted due to an error.
 {
     delegateHandler->updaterDidNotFindUpdate();
 }
-@end
 
-@interface AppUpdaterDelegate : NSObject <SPUUpdaterDelegate>
-@property (nonatomic, strong) SPUStandardUpdaterController* updaterController;
-@end
+/*
+@return The set of channel names the updater is allowed to find new updates in. An empty set is the default behavior,
+        which means the updater will only look for updates in the default channel.
+*/
+- (NSSet<NSString*>*)allowedChannelsForUpdater:(SPUUpdater*)updater
+{
+    auto channels = delegateHandler->allowedChannelsForUpdater();
 
-@implementation AppUpdaterDelegate
+    NSSet* set = [NSSet set];
+    NSLog (@"%@", set);
+
+    for (const auto& channel : channels)
+    {
+        NSString* str = [NSString stringWithUTF8String:channel.c_str()];
+        set = [set setByAddingObject:str];
+        NSLog (@"%@", set);
+    }
+
+    return set;
+}
+
 @end
 
 Sparkle::Sparkle()
 {
-    updaterDelegate = [[AppUpdaterDelegate alloc] init];
+    updaterDelegate = [[SparkleDelegate alloc] init:this];
     updaterDelegate.updaterController = [[SPUStandardUpdaterController alloc] initWithStartingUpdater:YES updaterDelegate:updaterDelegate userDriverDelegate:nil];
 
     [updaterDelegate.updaterController.updater clearFeedURLFromUserDefaults];

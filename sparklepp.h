@@ -41,13 +41,14 @@ END_JUCE_MODULE_DECLARATION
 #include "JuceHeader.h"
 
 #ifdef __OBJC__
-@class AppUpdaterDelegate;
+@class SparkleDelegate;
 #endif
 
 class Sparkle
 {
 public:
     Sparkle();
+    Sparkle (std::vector<std::string> channels);
     ~Sparkle();
 
     /* This will asynchronously launch an update GUI if an update is available */
@@ -76,15 +77,24 @@ public:
     /* internal */
     void didFindValidUpdate();
     void updaterDidNotFindUpdate();
+    void setChannels (std::vector<std::string> allowedChannels)
+    {
+        channels = std::move (allowedChannels);
+    }
+    std::vector<std::string> allowedChannelsForUpdater() const
+    {
+        return channels;
+    }
 
 private:
 #ifdef __OBJC__
     // Expose ObjC type only to updater_sparkle.mm. This allows ARC to properly track its lifetime.
-    AppUpdaterDelegate* updaterDelegate;
+    SparkleDelegate* updaterDelegate;
 #else
     void* updaterDelegate;
 #endif
 
+    std::vector<std::string> channels;
     juce::ListenerList<Listener> listeners;
 };
 
