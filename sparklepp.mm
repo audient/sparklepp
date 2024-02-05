@@ -10,17 +10,24 @@ Sparkle.mm
 
 #if SPARKLE_UPDATER_ENABLE
 
-#import <Sparkle/Sparkle.h>
+#define SPU_OBJC_DIRECT_MEMBERS __attribute__((objc_direct_members))
+#define SPU_OBJC_DIRECT __attribute__((objc_direct))
 
-#include "sparklepp.h"
+#import <Sparkle/Sparkle.h>
+#import "SPUModifiedUpdaterController.mm"
+#import "SPUCommandLineUserDriver.mm"
+#import "SUUpdatePermissionResponse.mm"
+#import "sparklepp.h"
+
+
 
 @interface SparkleDelegate : NSObject <SPUUpdaterDelegate>
 {
     Sparkle* delegateHandler;
 }
-@property (nonatomic, strong) SPUStandardUpdaterController* updaterController;
+@property (nonatomic, strong) SPUModifiedUpdaterController* updaterController;
 
-- (id)init:(Sparkle*)handler;
+- (instancetype)init:(Sparkle*)handler;
 
 /*!
 Returns whether Sparkle should prompt the user about automatic update checks.
@@ -79,7 +86,7 @@ Called after an update is aborted due to an error.
 @end
 
 @implementation SparkleDelegate
-- (id)init:(Sparkle*)handler
+- (instancetype)init:(Sparkle*)handler
 {
     self = [super init];
     if (self)
@@ -182,7 +189,7 @@ Called after an update is aborted due to an error.
 Sparkle::Sparkle()
 {
     updaterDelegate = [[SparkleDelegate alloc] init:this];
-    updaterDelegate.updaterController = [[SPUStandardUpdaterController alloc] initWithStartingUpdater:YES updaterDelegate:updaterDelegate userDriverDelegate:nil];
+    updaterDelegate.updaterController = [[SPUModifiedUpdaterController alloc] initWithStartingUpdater:YES updaterDelegate:updaterDelegate userDriverDelegate:nil];
 
     [updaterDelegate.updaterController.updater clearFeedURLFromUserDefaults];
 }

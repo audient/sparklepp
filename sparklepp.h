@@ -39,6 +39,8 @@ END_JUCE_MODULE_DECLARATION
 #if SPARKLE_UPDATER_ENABLE
 
 #include "JuceHeader.h"
+#include <vector>
+#include <string>
 
 #ifdef __OBJC__
 @class SparkleDelegate;
