@@ -36,17 +36,26 @@ END_JUCE_MODULE_DECLARATION
 #ifndef SPARKLEPP_H_INCLUDED
 #define SPARKLEPP_H_INCLUDED
 
+#if SPARKLE_UPDATER_ENABLE
+
 #include "JuceHeader.h"
+#include <vector>
+#include <string>
+
+#ifdef __OBJC__
+@class SparkleDelegate;
+#endif
 
 class Sparkle
 {
 public:
-    Sparkle(const juce::URL& appcastUrl);
+    Sparkle();
+    Sparkle (std::vector<std::string> channels);
     ~Sparkle();
-    
+
     /* This will asynchronously launch an update GUI if an update is available */
     void checkForUpdateInBackground();
-    
+
     /* This will asynchronously check if an update is available.
      * If an update is available the didFindValidUpdate method will becalled on 
      * listeners.
@@ -54,31 +63,42 @@ public:
      * be called on listeners.
      */
     void checkForUpdateInformation();
-    
+
     class Listener
     {
     public:
         virtual ~Listener() {}
-        
+
         virtual void didFindValidUpdate() {}
         virtual void updaterDidNotFindUpdate() {}
     };
-    
+
     void addListener (Listener* listener);
     void removeListener (Listener* listener);
-    
+
     /* internal */
     void didFindValidUpdate();
     void updaterDidNotFindUpdate();
+    void setChannels (std::vector<std::string> allowedChannels)
+    {
+        channels = std::move (allowedChannels);
+    }
+    std::vector<std::string> allowedChannelsForUpdater() const
+    {
+        return channels;
+    }
+
 private:
-    class Private;
-#ifdef JUCE_MAC
-    Private* d;
+#ifdef __OBJC__
+    // Expose ObjC type only to updater_sparkle.mm. This allows ARC to properly track its lifetime.
+    SparkleDelegate* updaterDelegate;
 #else
-    std::unique_ptr<Private> d;
+    void* updaterDelegate;
 #endif
-    
+
+    std::vector<std::string> channels;
     juce::ListenerList<Listener> listeners;
 };
 
+#endif
 #endif
